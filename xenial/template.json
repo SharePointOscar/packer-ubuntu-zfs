@@ -13,11 +13,11 @@
 		"spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
 
 		"ssh_pty": true,
-		"instance_type": "m4.large",
+		"instance_type": "t2.micro",
 		"associate_public_ip_address": true,
 		"ssh_username": "ubuntu",
-		"ssh_timeout": "5m",
-
+		"ssh_port":22,
+		"ssh_timeout": "10m",
 		"source_ami_filter": {
 			"filters": {
 				"virtualization-type": "hvm",
@@ -32,51 +32,51 @@
 			{
 				"device_name": "/dev/xvdf",
 				"delete_on_termination": true,
-				"volume_size": 8,
+				"volume_size": 2,
 				"volume_type": "gp2"
 			}
 		],
 
 		"run_tags": {
-			"Name": "Packer Builder - ZFS Root Ubuntu",
-			"Project": "operator-error.com"
+			"Name": "@SharePointOscar - Ubuntu",
+			"Project": "sharepointoscar.com"
 		},
 		"run_volume_tags": {
-			"Name": "Packer Builder - ZFS Root Ubuntu",
-			"Project": "operator-error.com"
+			"Name": "@SharePointOscar - Ubuntu",
+			"Project": "sharepointoscar.com"
 		},
 
-		"ami_name": "ubuntu-xenial-16.04-amd64-zfs-server-{{ user `buildtime` }}",
-		"ami_description": "Ubuntu Xenial (16.04) with ZFS Root Filesystem",
+		"ami_name": "@SharePointOscar - ubuntu-xenial-16.04-amd64-zfs-server-{{ user `buildtime` }}",
+		"ami_description": "@SharePointOscar -Ubuntu Xenial (16.04)",
 		"ami_virtualization_type": "hvm",
 		"ami_regions": [
-			"ap-south-1",
-			"ap-northeast-1",
-			"ap-northeast-2",
-			"ap-southeast-1",
-			"ap-southeast-2",
-			"ca-central-1",
-			"eu-west-1",
-			"eu-west-2",
-			"eu-central-1",
-			"sa-east-1",
-			"us-east-1",
-			"us-east-2",
-			"us-west-1"
+			"us-west-2"
 		],
 		"ami_root_device": {
 			"source_device_name": "/dev/xvdf",
 			"device_name": "/dev/xvda",
 			"delete_on_termination": true,
-			"volume_size": 8,
+			"volume_size": 2,
 			"volume_type": "gp2"
 		},
 		"tags": {
-			"Name": "Ubuntu Xenial (16.04) with ZFS Root Filesystem",
+			"Name": "@SharePointOscar - Ubuntu Xenial (16.04)",
 			"BuildTime": "{{ user `buildtime` }}"
 		}
 	}],
 	"provisioners": [
+		{
+			"type": "file",
+			"source": "/Users/sharepointoscar/.ssh/terraform.pub",
+			"destination": "/home/ubuntu/.ssh/terraform.pub"
+		},
+		{
+		"type": "shell",
+			"inline": [
+				"cat /home/ubuntu/.ssh/terraform.pub  >> /home/ubuntu/.ssh/authorized_keys",
+				"cat /home/ubuntu/.ssh/authorized_keys"
+			]
+		},
 		{
 			"type": "file",
 			"source": "scripts/sources-us-west-2.list",
@@ -93,6 +93,6 @@
 			"script": "scripts/surrogate-bootstrap.sh",
 			"skip_clean": true
 		}
+
 	]
 }
-
